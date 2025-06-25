@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Image from "next/image";
 import * as yup from "yup";
+
 
 const artistSchema = yup.object({
   name: yup.string().required("Name is required"),
@@ -41,22 +43,16 @@ console.log("Image Base64:", previewImage);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
+      
       className="space-y-6 max-w-xl mx-auto bg-white shadow-md rounded p-6"
     >
-        <div>
+
+<div>
   <label className="block text-sm font-medium mb-1">Profile Image</label>
   <input
     type="file"
     accept="image/*"
     onChange={(e) => {
-      {previewImage && (
-        <img
-          src={previewImage}
-          alt="Preview"
-          className="mt-2 rounded w-32 h-32 object-cover border"
-        />
-      )}
-      
       const file = e.target.files?.[0];
       if (file) {
         const reader = new FileReader();
@@ -68,6 +64,18 @@ console.log("Image Base64:", previewImage);
     }}
     className="w-full border rounded p-2"
   />
+
+  {previewImage && (
+    <div className="mt-2 w-32 h-32 relative border rounded overflow-hidden">
+      <Image
+        src={previewImage}
+        alt="Preview"
+        fill
+        className="object-cover"
+        unoptimized
+      />
+    </div>
+  )}
 </div>
 
 
