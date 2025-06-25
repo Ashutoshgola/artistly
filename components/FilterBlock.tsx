@@ -28,9 +28,10 @@ const FilterBlock: React.FC<FilterBlockProps> = ({
       {categories.map((cat) => (
         <button
           key={cat}
-          onClick={() =>
-            setSelectedCategory((prev) => (prev === cat ? null : cat))
-          }
+          onClick={() => {
+            // Fix: Use a regular function call instead of passing a callback
+            setSelectedCategory(selectedCategory === cat ? null : cat);
+          }}
           className={`px-4 py-2 rounded border ${
             selectedCategory === cat
               ? "bg-blue-600 text-white"
