@@ -5,14 +5,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
 import * as yup from "yup";
 
-
+// Fix the schema definition
 const artistSchema = yup.object({
   name: yup.string().required("Name is required"),
   bio: yup.string().required("Bio is required"),
   category: yup.string().required("Category is required"),
   location: yup.string().required("Location is required"),
   priceRange: yup.string().required("Fee range is required"),
-  languages: yup.array().of(yup.string()).min(1, "Select at least one language"),
+  languages: yup.array().of(yup.string().required()).min(1, "Select at least one language").required(),
 });
 
 type ArtistFormInputs = yup.InferType<typeof artistSchema>;
@@ -26,13 +26,15 @@ const ArtistForm = () => {
     formState: { errors },
   } = useForm<ArtistFormInputs>({
     resolver: yupResolver(artistSchema),
+    defaultValues: {
+      languages: [],
+    },
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const onSubmit = (data: ArtistFormInputs) => {
     console.log("Submitted Data:", data);
-console.log("Image Base64:", previewImage);
- 
+    console.log("Image Base64:", previewImage);
     reset();
   };
 
@@ -43,41 +45,38 @@ console.log("Image Base64:", previewImage);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      
       className="space-y-6 max-w-xl mx-auto bg-white shadow-md rounded p-6"
     >
+      <div>
+        <label className="block text-sm font-medium mb-1">Profile Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setPreviewImage(reader.result as string);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+          className="w-full border rounded p-2"
+        />
 
-<div>
-  <label className="block text-sm font-medium mb-1">Profile Image</label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(e) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    }}
-    className="w-full border rounded p-2"
-  />
-
-  {previewImage && (
-    <div className="mt-2 w-32 h-32 relative border rounded overflow-hidden">
-      <Image
-        src={previewImage}
-        alt="Preview"
-        fill
-        className="object-cover"
-        unoptimized
-      />
-    </div>
-  )}
-</div>
-
+        {previewImage && (
+          <div className="mt-2 w-32 h-32 relative border rounded overflow-hidden">
+            <Image
+              src={previewImage}
+              alt="Preview"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        )}
+      </div>
 
       <div>
         <label className="block text-sm font-medium">Name</label>
