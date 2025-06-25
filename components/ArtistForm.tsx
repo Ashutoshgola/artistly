@@ -19,7 +19,7 @@ const ArtistForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    // watch,
     reset,
     formState: { errors },
   } = useForm<ArtistFormInputs>({
@@ -49,6 +49,14 @@ console.log("Image Base64:", previewImage);
     type="file"
     accept="image/*"
     onChange={(e) => {
+      {previewImage && (
+        <img
+          src={previewImage}
+          alt="Preview"
+          className="mt-2 rounded w-32 h-32 object-cover border"
+        />
+      )}
+      
       const file = e.target.files?.[0];
       if (file) {
         const reader = new FileReader();
